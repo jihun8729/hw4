@@ -60,10 +60,10 @@ void *handle_clnt(void * arg)
 		cl->count=0;
 		
 		memset(buf,0,sizeof(buf));
-		search_word(cl->root,search,buf,0,cl->search_result,&cl->count);
-		qsort(cl->search_result,cl->count,sizeof(result),compare);
-		write(cl->sockfd,&cl->count,sizeof(int));
-		for(int i=0; i<cl->count && i<10; i++){
+		search_word(cl->root,search,buf,0,cl->search_result,&cl->count); //단어 검색
+		qsort(cl->search_result,cl->count,sizeof(result),compare); // cl->count순으로 sorting
+		write(cl->sockfd,&cl->count,sizeof(int)); //클라이언트에게  파일 개수 전송
+		for(int i=0; i<cl->count && i<10; i++){ //count가 10보다 크면 10개까지만 전송
 			send(cl->sockfd,&cl->search_result[i],sizeof(cl->search_result[i]),0);
 	 		printf("%s %d\n",cl->search_result[i].word,cl->search_result[i].frequency);
 		}
@@ -112,9 +112,9 @@ void insert(TrieNode *root, char* str, int search_count){
 		// 알파벳에 맞게 index 설정
 		if(*str == ' '){
 			index = 52;
-		}else if(*str>='a'&&*str<='z'){
+		}else if(*str>='a'&&*str<='z'){ //소문자
 			index = *str - 'a';
-		}else if(*str>='A'&&*str<='Z'){
+		}else if(*str>='A'&&*str<='Z'){ //대문자
 			index = *str -'A' + 26;
 		}
 
@@ -134,7 +134,7 @@ void readFile(TrieNode *root){
 	char word[BUF_SIZE];
 	int search_count=0;
 	while (fgets(line, sizeof(line), fp)) { //파일에서 한줄씩 읽기
-        char *check = strrchr(line, ' ');
+        char *check = strrchr(line, ' '); // 마지막 공백을 찾기
         if (check) {
             *check = '\0';  
         	check++;
@@ -150,8 +150,8 @@ void search_word(TrieNode *root, char *search, char *buf, int location, result *
 	
 	if(!root) return;
 	
-	if(root->isleaf==1){	
-		if(strstr(buf,search)){
+	if(root->isleaf==1){	// 단어인 경우
+		if(strstr(buf,search)){ //검색단어가 일부라도 포함되었다면
 			buf[location] = '\0';
 			strcpy(res[*count].word,buf);
 			res[*count].frequency = root->frequency;
