@@ -58,14 +58,14 @@ void *handle_clnt(void * arg)
 	
 	while ((str_len = read(cl->sockfd, search, sizeof(search))) != 0){
 		cl->count=0;
-		
+		printf("%s\n",search);
 		memset(buf,0,sizeof(buf));
 		search_word(cl->root,search,buf,0,cl->search_result,&cl->count); //단어 검색
 		qsort(cl->search_result,cl->count,sizeof(result),compare); // cl->count순으로 sorting
 		write(cl->sockfd,&cl->count,sizeof(int)); //클라이언트에게  파일 개수 전송
 		for(int i=0; i<cl->count && i<10; i++){ //count가 10보다 크면 10개까지만 전송
 			send(cl->sockfd,&cl->search_result[i],sizeof(cl->search_result[i]),0);
-	 		printf("%s %d\n",cl->search_result[i].word,cl->search_result[i].frequency);
+	 		//printf("%s %d\n",cl->search_result[i].word,cl->search_result[i].frequency);
 		}
 	}
 		
@@ -168,7 +168,7 @@ void search_word(TrieNode *root, char *search, char *buf, int location, result *
 			}else if(i<26){
 				buf[location] = 'a' + i;
 			}else{
-				buf[location] = 'A' + (i - 26);
+				buf[location] = 'A' + i - 26;
 			}
 			//printf("%s\n",buf);
 			search_word(root->children[i],search,buf,location+1, res, count);
