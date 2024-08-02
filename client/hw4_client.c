@@ -90,13 +90,13 @@ void *send_msg(void * arg)   // send thread main
 				printf("%s",COLOR_RED);
 				fwrite(word,sizeof(char),strlen(word),stdout); //검색하는 단어가 포함 된 부분
 				printf("%s",COLOR_RESET);
-				text = start + strlen(word);
+				text = start + strlen(word); 
 			}
             printf("%s %d\n",text,re[i].frequency);
         }
 		//printf("%d, %d\n",count,index);
 		printf ("\x1b[%dA", count); //출력한만큼 커서를 위로 올리고
-		printf("\x1B[3;%dH",index+14); // search word: + 마지막으로 입력한 문자뒤로 커서 이동
+		printf("\x1B[2;%dH",index+14); // search word: + 마지막으로 입력한 문자뒤로 커서 이동
 		printf("\x1B[J"); //커서 뒤에 있는 내요들 다 지우기
 		
 	}
