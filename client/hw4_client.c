@@ -55,28 +55,25 @@ void *send_msg(void * arg)   // send thread main
 	{
 		int str_len = read(STDIN_FILENO,&ch,1);
 		memset(re,0,sizeof(re));
-		// if (ch =='q'||ch=='Q') 
-		// {
-		// 	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
-		// 	close(sock);
-		// 	exit(0);
-		// }
 		if(ch == 127){
 			if(index>0){
 				index--;
-				word[index]='\0';
-				printf("\r");
-				printf("\033[K");
-				printf("Search Word: %s",word);				
+				word[index] = '\0';				
 			}
 		}else{
-			word[index]=ch;
-			printf("%c",ch);
+			word[index] = ch;
 			index++;
 			word[index] = '\0';
 		}
-		if(index==0) continue; 
-		printf("\n");
+		// 내용 다 지우기
+		printf("\033[2J");
+		printf("\033[H");
+		
+		if(index==0) {
+			printf("Search Word: \n");
+			continue;
+		} 
+		printf("Search Word: %s\n", word);
 		
 		write(sock, word , strlen(word)+1);
 		read(sock,&count,sizeof(int));
@@ -94,10 +91,7 @@ void *send_msg(void * arg)   // send thread main
 			}
             printf("%s %d\n",text,re[i].frequency);
         }
-		//printf("%d, %d\n",count,index);
-		printf ("\x1b[%dA", count); //출력한만큼 커서를 위로 올리고
-		printf("\x1B[2;%dH",index+14); // search word: + 마지막으로 입력한 문자뒤로 커서 이동
-		printf("\x1B[J"); //커서 뒤에 있는 내요들 다 지우기
+		
 		
 	}
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
